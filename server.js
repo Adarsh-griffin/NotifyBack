@@ -9,7 +9,7 @@ require("dotenv").config();
 const authRoutes = require("./routes/authRoutes");
 const noteRoutes = require("./routes/noteRoutes");
 const ocrRoutes = require("./routes/ocrRoutes");
-const aiRoutes = require ("./routes/aiRoutes")
+const aiRoutes = require("./routes/aiRoutes");
 
 const app = express();
 
@@ -22,7 +22,7 @@ app.use(fileUpload()); // Add file upload middleware
 app.use("/api/notes", noteRoutes);
 app.use("/api/auth", authRoutes);
 app.use("/api/ocr", ocrRoutes);
-app.use("/api/ai ",aiRoutes);
+app.use("/api/ai", aiRoutes); // Removed extra space in the path
 
 // Proxy route for Hugging Face API
 app.post("/api/ai/enhance-text", async (req, res) => {
@@ -37,17 +37,17 @@ app.post("/api/ai/enhance-text", async (req, res) => {
       { inputs: text },
       {
         headers: {
-          "Authorization": `Bearer ${process.env.HUGGINGFACE_API_KEY}`
-        }
+          Authorization: `Bearer ${process.env.HUGGINGFACE_API_KEY}`,
+        },
       }
     );
 
     res.json(response.data);
   } catch (error) {
     console.error("AI Enhancement Error:", error);
-    res.status(500).json({ 
+    res.status(500).json({
       error: "AI processing failed",
-      details: error.message 
+      details: error.message,
     });
   }
 });
@@ -55,6 +55,11 @@ app.post("/api/ai/enhance-text", async (req, res) => {
 // Test route
 app.get("/api/test", (req, res) => {
   res.json({ message: "✅ API is working correctly!" });
+});
+
+// Root route
+app.get("/", (req, res) => {
+  res.send("Welcome to NotifyBack API");
 });
 
 // Server setup
