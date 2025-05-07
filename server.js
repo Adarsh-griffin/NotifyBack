@@ -1,38 +1,65 @@
 const express = require("express");
 const mongoose = require("mongoose");
-
 const cors = require("cors");
 const axios = require("axios");
+const FormData = require("form-data");
+const fileUpload = require("express-fileupload");
 require("dotenv").config();
-//import bodyParser from "body-parser";
 
-const authRoutes = require("./routes/authRoutes"); // Ensure this file exists
-const noteRoutes = require("./routes/noteRoutes")
+const authRoutes = require("./routes/authRoutes");
+const noteRoutes = require("./routes/noteRoutes");
+const ocrRoutes = require("./routes/ocrRoutes");
+const aiRoutes = require ("./routes/aiRoutes")
 
 const app = express();
 
-app.use(express.json()); // ✅ Enable JSON body parsing
-app.use(cors()); // ✅ Allow frontend requests
+// Middleware
+app.use(express.json());
+app.use(cors());
+app.use(fileUpload()); // Add file upload middleware
 
+// Routes
 app.use("/api/notes", noteRoutes);
 app.use("/api/auth", authRoutes);
-//app.use("/api", deepseekRoutes); // Register the route
+app.use("/api/ocr", ocrRoutes);
+app.use("/api/ai ",aiRoutes);
 
+// Proxy route for Hugging Face API
+app.post("/api/ai/enhance-text", async (req, res) => {
+  try {
+    const { text } = req.body;
+    if (!text) {
+      return res.status(400).json({ error: "Text is required" });
+    }
 
-app.get("/api/test", (req, res) => {
-    res.json({ message: "✅ API is working correctly!" });
+    const response = await axios.post(
+      "https://api-inference.huggingface.co/models/facebook/bart-large-cnn",
+      { inputs: text },
+      {
+        headers: {
+          "Authorization": `Bearer ${process.env.HUGGINGFACE_API_KEY}`
+        }
+      }
+    );
+
+    res.json(response.data);
+  } catch (error) {
+    console.error("AI Enhancement Error:", error);
+    res.status(500).json({ 
+      error: "AI processing failed",
+      details: error.message 
+    });
+  }
 });
 
+// Test route
+app.get("/api/test", (req, res) => {
+  res.json({ message: "✅ API is working correctly!" });
+});
 
-
-
-
-
-
-
+// Server setup
 const PORT = process.env.PORT || 5001;
 
-// ✅ Updated MongoDB connection (no deprecated options)node 
 mongoose
   .connect(process.env.MONGO_URI)
   .then(() => {
