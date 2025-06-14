@@ -54,7 +54,6 @@ exports.login = async (req, res) => {
 
     // Retrieve User's Notes
     const notes = await Note.find({ userId: user._id }).sort({ createdAt: -1 });
-    console.log("📌 Retrieved Notes:", notes); // ✅ Debugging
 
     res.json({ 
       message: "Login successful", 
