@@ -7,17 +7,17 @@ const { GoogleGenerativeAI } = require('@google/generative-ai'); // For Gemini A
 // Local fallback using @xenova/transformers remains a good option.
 
 // Initialize local model fallback
-const { pipeline } = require('@xenova/transformers'); // For local fallback
-let localModel;
-async function initializeLocalModel() {
-    try {
-        localModel = await pipeline('summarization', 'Xenova/distilbart-cnn-6-6');
-        console.log('Local model loaded successfully');
-    } catch (err) {
-        console.error('Failed to load local model:', err.message);
-    }
-}
-initializeLocalModel();
+// const { pipeline } = require('@xenova/transformers'); // For local fallback
+// let localModel;
+// async function initializeLocalModel() {
+//     try {
+//         localModel = await pipeline('summarization', 'Xenova/distilbart-cnn-6-6');
+//         console.log('Local model loaded successfully');
+//     } catch (err) {
+//         console.error('Failed to load local model:', err.message);
+//     }
+// }
+// initializeLocalModel();
 
 // Initialize Gemini
 // Ensure you have GEMINI_API_KEY set in your environment variables.
