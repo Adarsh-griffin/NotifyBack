@@ -35,6 +35,10 @@ app.get("/api/test", (req, res) => {
   res.json({ message: "✅ API is working correctly!" });
 });
 
+app.get("/", (req, res) => {
+    res.status(200).json({ message: "Welcome to the NotifyBack API!", status: "operational" });
+});
+
 // Server setup
 const PORT = process.env.PORT || 5000;
 
